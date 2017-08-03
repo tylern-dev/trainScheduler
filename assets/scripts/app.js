@@ -16,6 +16,8 @@
     var firstTrain = $('#first-train');
     var freq = $('#frequency');
 
+    var trainTable = $('#train-table')
+
     
     var trainObject = {
         name: trainName,
@@ -24,6 +26,8 @@
         frequency: freq
     }
 
+    
+    
     var trainsRef = database.ref('trains');
     var trainadd = trainsRef.push();
 
@@ -43,6 +47,16 @@
              });
         })
     }
+
+    database.ref('trains').on('child_added', function(snap){
+        var result = snap.val();
+            trainTable.append(
+                '<tr><td>'+result.name+'</td>'+
+                '<td>'+result.destination+'</td>'+
+                '<td>'+result.firstTrain+'</td>'+
+                '<td>'+result.frequency+'</td></tr>'
+            )
+    })
 
     function main(){
         addTrain();
