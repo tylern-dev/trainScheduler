@@ -27,6 +27,7 @@
     var trainsRef = database.ref('trains');
     var trainadd = trainsRef.push();
 
+    //grabs values and adds train to firebase
     function addTrain(){
         $('#add-train').on('click', function(event){
              event.preventDefault();
@@ -34,14 +35,20 @@
              trainObject.destination = destination.val().trim();
              trainObject.firstTrain = firstTrain.val().trim();
              trainObject.frequency = freq.val().trim();
-             trainadd.set(trainObject)
+             //this adds the values to firebase
+             trainadd.set(trainObject) 
+             //clears the form after submit
              $('form').each(function(){
                  this.reset();
              });
         })
     }
 
-    addTrain();
+    function main(){
+        addTrain();
+    }
+
+    main();//main program run
 
     
-}())
+}())//end of iffy
