@@ -27,6 +27,8 @@
     }
 
     
+
+    
     
     var trainsRef = database.ref('trains');
     var trainadd = trainsRef.push();
@@ -50,11 +52,18 @@
 
     database.ref('trains').on('child_added', function(snap){
         var result = snap.val();
+        var timeCalcObj = { 
+            nextArrival: moment().add(result.frequency, 'm').format('HH:mm A'),
+            minAway: moment().subtract(result.frequency, 'm').format('m')
+         }   
             trainTable.append(
-                '<tr><td>'+result.name+'</td>'+
+                '<tr>'+
+                '<td>'+result.name+'</td>'+
                 '<td>'+result.destination+'</td>'+
-                '<td>'+result.firstTrain+'</td>'+
-                '<td>'+result.frequency+'</td></tr>'
+                '<td>'+result.frequency+'</td>'+
+                '<td>'+timeCalcObj.nextArrival+'</td>'+
+                '<td>'+timeCalcObj.minAway+'</td>'+
+                '</tr>'
             )
     })
 
