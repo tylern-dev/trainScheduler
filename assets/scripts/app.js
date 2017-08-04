@@ -14,7 +14,7 @@
     var trainName = $('#train-name');
     var destination = $('#destination');
     var firstTrain = $('#first-train');
-    var freq = $('#frequency');
+    var frequency = $('#frequency');
 
     var trainTable = $('#train-table')
 
@@ -23,7 +23,7 @@
         name: trainName,
         destination: destination,
         firstTrain: firstTrain,
-        frequency: freq
+        frequency: frequency
     }
 
     
@@ -40,7 +40,7 @@
              trainObject.name = trainName.val().trim();
              trainObject.destination = destination.val().trim();
              trainObject.firstTrain = firstTrain.val().trim();
-             trainObject.frequency = freq.val().trim();
+             trainObject.frequency = frequency.val().trim();
              //this adds the values to firebase
              trainadd.set(trainObject) 
              //clears the form after submit
@@ -53,8 +53,8 @@
     database.ref('trains').on('child_added', function(snap){
         var result = snap.val();
         var timeCalcObj = { 
-            nextArrival: moment().add(result.frequency, 'm').format('HH:mm A'),
-            minAway: moment().subtract(result.frequency, 'm').format('m')
+            nextArrival: nextTrainTime(result.frequency, result.firstTrain),
+            minAway: trainFreq(result.frequency,result.firstTrain)
          }   
             trainTable.append(
                 '<tr>'+
@@ -66,6 +66,30 @@
                 '</tr>'
             )
     })
+
+    function trainFreq(freq, fTime){
+        var frequency = freq;
+        var firstTime = fTime;
+        var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1,"years");
+        var currentTime = moment();
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        var tRemainder = diffTime % freq;
+        var tMinutesTillTrain = frequency-tRemainder;
+        return tMinutesTillTrain;
+
+    }
+
+    function nextTrainTime(freq, fTime){
+        var frequency = freq;
+        var firstTime = fTime;
+        var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1,"years");
+        var currentTime = moment();
+        var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+        var tRemainder = diffTime % freq;
+        var tMinutesTillTrain = frequency-tRemainder;
+        var nextTrain = moment().add(tMinutesTillTrain, "minutes").format("hh:mm A");
+        return nextTrain
+    }
 
     function main(){
         addTrain();
